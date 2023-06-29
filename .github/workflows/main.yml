@@ -1,4 +1,4 @@
-name: Build and Deploy to Dataflow
+name: Build and Deploy to GKE
 
 on:
   push:
