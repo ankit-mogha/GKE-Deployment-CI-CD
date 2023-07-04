@@ -1,8 +1,7 @@
 on:
   push:
     branches:
-      - '**'        # matches every branch
-      - '!main'   # excludes main
+      - main
 jobs:
   build_and_package:
     name: Build And Package
@@ -11,7 +10,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
-          java-version: '11'
+          java-version: '19'
           distribution: 'temurin'
       - name: Build with Maven
         run: mvn test
