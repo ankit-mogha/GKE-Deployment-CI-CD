@@ -13,7 +13,6 @@ env:
   GKE_ZONE: asia-southeast1-a
 
 
-
 jobs:
   setup-build-deploy:
     name: Setup, Build, and Deploy
@@ -25,40 +24,19 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: 19
-      - run: mvn clean install
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: GKE-deployment-0.0.1-SNAPSHOT.jar
-          path: target/
-  build-docker-image:
-    name: build-docker
-    needs: setup-build-deploy
+      - run: mvn compile jib:build
+
+  deploy-to-gke:
+    needs: build-docker-image
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
-        uses: actions/checkout@v2
-      - name: Retrieve saved jar
-        uses: actions/download-artifact@v2
-        with:
-          name: GKE-deployment-0.0.1-SNAPSHOT.jar
-          path: target/
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v1'
-        with:
-          credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
-
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Docker Build
-        uses: docker/setup-buildx-action@v1
-
-      - name: Build and push Docker image
+      - uses: actions/checkout@master
+      - name: kubectl - Google Cloud GKE cluster.
+        uses: ameydev/gke-kubectl-action@master
         env:
-          DOCKER_USERNAME: ${{ secrets.USERNAME_GITHUB }}
-          DOCKER_PASSWORD: ${{ secrets.PASSWORD_GITHUB }}
-        run: |
-          echo $DOCKER_PASSWORD | docker login ghcr.io -u $DOCKER_USERNAME --password-stdin
-          docker build --tag $IMAGE_NAME .
-          docker push $IMAGE_NAME
+          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          CLUSTER_NAME: ${{ secrets.CLUSTER_NAME }}
+          ZONE_NAME: asia-southeast1-a
+        with:
+          args: apply -f k8s/
