@@ -6,12 +6,7 @@ on:
       - main
 
 env:
-  IMAGE_NAME: ghcr.io/deepak1067/myapp/myimage:latest
-  PROJECT_ID: ${{ secrets.PROJECT_ID }}
-  GKE_CLUSTER: deployment-cluster-sdk
-  GKE_ZONE: asia-southeast1-a
-
-env:
+  IMAGE_NAME: ghcr.io/${{secrets.USERNAME_GITHUB}}/myapp/myimage:latest
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   GKE_CLUSTER: deployment-cluster-sdk
   GKE_NAMESPACE: demo-application
@@ -53,23 +48,17 @@ jobs:
         with:
           credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
 
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v1'
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: 'Use gcloud CLI'
-        run: |
-          gcloud auth configure-docker
-      # Build the Docker image
-      - name: Build
-        run: |
-          docker build -t gke-deployment-ci-cd .
-      # Tag the Docker image
-      - name: Tag
-        run: |
-          docker tag gke-deployment-ci-cd gcr.io/$PROJECT_ID/gke-deployment-ci-cd
+      - name: Set up Docker Build
+        uses: docker/setup-buildx-action@v1
 
-      # Push the Docker image to Google Container Registry
-      - name: Publish
+      - name: Build and push Docker image
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
-          docker push gcr.io/my-kubernetes-project-389604/gke-deployment-ci-cd
-            # Push the Docker image to Google Container Registry
+          echo $DOCKER_PASSWORD | docker login ghcr.io -u $DOCKER_USERNAME --password-stdin
+          docker build --tag $IMAGE_NAME .
+          docker push $IMAGE_NAME
