@@ -41,7 +41,7 @@
 						<image>openjdk:19</image>
 					</from>
 					<to>
-						<image>ghcr.io/ankit-mogha/myapp/myimage:latest</image>
+						<image>ghcr.io/ankit-mogha/mytestapp/myimage:latest</image>
 						<auth>
 							<username>ankit-mogha</username>
 							<password>${{ secrets.PASSWORD_GITHUB }}</password>

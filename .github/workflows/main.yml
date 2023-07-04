@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  IMAGE_NAME: ghcr.io/ankit-mogha/myapp/myimage:latest
+  IMAGE_NAME: ghcr.io/ankit-mogha/mytestapp/myimage:latest
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   GKE_CLUSTER: deployment-cluster-sdk
   GKE_NAMESPACE: demo-application
