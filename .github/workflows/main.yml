@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  IMAGE_NAME: ghcr.io/${{ secrets.USERNAME_GITHUB }}/myapp/myimage:latest
+  IMAGE_NAME: ghcr.io/ankit-mogha/myapp/myimage:latest
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   GKE_CLUSTER: deployment-cluster-sdk
   GKE_NAMESPACE: demo-application
@@ -23,4 +23,4 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: 19
-      - run: mvn compile jib:build
+      - run: mvn compile jib:dockerBuild
