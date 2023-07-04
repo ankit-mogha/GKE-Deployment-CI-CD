@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  IMAGE_NAME: ghcr.io/ankit-mogha/mytestapp/myimage:latest
+  IMAGE_NAME: ghcr.io/ankit-mogha/myapp/myimage:latest
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   GKE_CLUSTER: deployment-cluster-sdk
   GKE_NAMESPACE: demo-application
@@ -24,3 +24,13 @@ jobs:
           distribution: 'adopt'
           java-version: 19
       - run: mvn compile jib:dockerBuild
+      - uses: actions/checkout@master
+      - name: kubectl - Google Cloud GKE cluster.
+        uses: ameydev/gke-kubectl-action@master
+        env:
+          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          CLUSTER_NAME: demoapp
+          ZONE_NAME: asia-southeast1-a
+        with:
+          args: apply -f k8s/
