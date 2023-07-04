@@ -24,13 +24,18 @@ jobs:
           distribution: 'adopt'
           java-version: 19
       - run: mvn compile jib:dockerBuild
+
+  deploy-to-gke:
+    needs: build-docker-image
+    runs-on: ubuntu-latest
+    steps:
       - uses: actions/checkout@master
       - name: kubectl - Google Cloud GKE cluster.
         uses: ameydev/gke-kubectl-action@master
         env:
           PROJECT_ID: ${{ secrets.PROJECT_ID }}
           APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-          CLUSTER_NAME: demoapp
+          CLUSTER_NAME: ${{ secrets.CLUSTER_NAME }}
           ZONE_NAME: asia-southeast1-a
         with:
           args: apply -f k8s/
