@@ -44,7 +44,7 @@
 						<image>ghcr.io/ankit-mogha/myapp/myimage:latest</image>
 						<auth>
 							<username>ankit-mogha</username>
-							<password>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</password>
+							<password>${{ secrets.PASSWORD_GITHUB }}</password>
 						</auth>
 					</to>
 				</configuration>
